@@ -12,16 +12,16 @@ using namespace std;
 
 struct fruit{
 	string name;
-	double quant;
-	double cost;
-	fruit(string f, double q, double c){
+	float quant;
+	float cost;
+	fruit(string f, float q, float c){
 		name = f;
 		quant = q;
 		cost = c;
 	}
 	bool operator <(const fruit& f) const{
-		return lexicographical_compare(name.c_str(), name.c_str()+int(strlen(name.c_str())), f.name.c_str(), f.name.c_str()+strlen(name.c_str()));
-		//return name < f.name;
+		this->name < f.name;
+		//return lexicographical_compare(name.c_str(), name.c_str()+int(strlen(name.c_str())), f.name.c_str(), f.name.c_str()+strlen(name.c_str()));
 	}
                //fruit operator +(const fruit& f){
 		//if(name != f.name){
@@ -38,12 +38,12 @@ int main(int argc, char *argv[]){
 		ifstream f;
 		f.open(argv[2]);
 		string line;
-		vector<string> lines;
+		//vector<string> lines;
 		vector<fruit> flist;
 		while(getline(f, line)){
 			istringstream iss(line);
 			string fr;
-			double p, q;
+			float p, q;
 			iss >> fr >> q >> p;
 			fruit inF = fruit(fr, q, p);
 			flist.push_back(inF);
@@ -65,15 +65,15 @@ int main(int argc, char *argv[]){
 						nlist.push_back(flist.at(i+1));
 						nt++;
 					}else{
-						double qp = flist.at(i+1).quant;
+						float qp = flist.at(i+1).quant;
 						nlist.at(nt).quant = nlist.at(nt).quant + qp;		
 					}
 				}
 			}
 
-			double tc;
+			float tc;
 			for(int i = 0; i < nlist.size(); i++){
-				double uc = nlist.at(i).quant * nlist.at(i).cost;
+				float uc = nlist.at(i).quant * nlist.at(i).cost;
 				tc+=uc;
 				cout << fixed << showpoint << setprecision(2) << setw(20) << setfill('.') <<  left <<  nlist.at(i).name << setfill(' ') <<  setw(6) << right << nlist.at(i).quant <<  " x " <<
 					setw(4)  <<  nlist.at(i).cost << " = " <<  setw(7) << right <<  uc << "  : " <<  setw(8) << right << tc << "\n";
@@ -121,9 +121,9 @@ int main(int argc, char *argv[]){
 				//i++;
 			//}
 		//}
-		double tc;
+		float tc;
 		for(int i = 0; i < flist.size(); i++){
-			double uc = flist.at(i).quant * flist.at(i).cost;
+			float uc = flist.at(i).quant * flist.at(i).cost;
 			tc+=uc;
 			cout << fixed << showpoint << setprecision(2) << setw(20) << setfill('.') <<  left <<  flist.at(i).name << setfill(' ') <<  setw(6) << right << flist.at(i).quant <<  " x " <<
 			      	setw(4)  <<  flist.at(i).cost << " = " <<  setw(7) << right <<  uc << "  : " <<  setw(8) << right << tc << "\n";
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
 	
 		}
 	}else{
-		cout << "Missing arguments\n";
+		cerr << "usage: ./sfruit2 -inorder|sortall|sortone file.txt";
 	}
 	return 0;	
 }

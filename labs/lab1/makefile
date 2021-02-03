@@ -1,6 +1,6 @@
 
 CC = g++
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 BIN = Fruit1 Fruit2 
 OBJ = $(BIN:%=%.o)
 
