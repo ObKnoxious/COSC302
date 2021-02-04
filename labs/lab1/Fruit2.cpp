@@ -107,13 +107,13 @@ int main(int argc, char* argv[]){
 			f.close();
 			return 0;
 		}else if(string(argv[1]) == "-sortall"){
-			ifstream fin;
-			fin.open(argv[2]);
+			ifstream f;
+			f.open(argv[2]);
 			string line;
 			struct Node* head = new Node();
 			string fr;
 			float p, q;
-			while(fin >> fr >> q >> p){
+			while(f >> fr >> q >> p){
 				Fruit inF = Fruit(fr, q, p);
 				Node* n = new Node();
 				Node* l = head;
@@ -140,16 +140,16 @@ int main(int argc, char* argv[]){
 
 			}
 			delete head;
-			fin.close();
+			f.close();
 			return 0;
 		}else if(string(argv[1]) == "-sortone"){
-			ifstream fin;
-			fin.open(argv[2]);
+			ifstream f;
+			f.open(argv[2]);
 			string line;
 			struct Node* head = new Node();
 			string fr;
 			float p, q;
-			while(fin >> fr >> q >> p){
+			while(f >> fr >> q >> p){
 				Fruit inF = Fruit(fr, q, p);
 				Node* n = new Node();
 				Node* l = head;
@@ -182,7 +182,7 @@ int main(int argc, char* argv[]){
 			}
 			delete head;
 
-			fin.close();
+			f.close();
 			return 0;
 		}
 	}else{
@@ -191,3 +191,4 @@ int main(int argc, char* argv[]){
 	}
 }
 
+// moose#0226 on Discord isn't british but I hear he does cat | cmd ... 
