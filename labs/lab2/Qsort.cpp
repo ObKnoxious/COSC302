@@ -1,8 +1,9 @@
 // Knox Crichton Lab 2
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <fstream>
-
+#include <sstream>
+#include <vector>
 using namespace std;
 
 class data{
@@ -17,7 +18,7 @@ class data{
 };
 
 istream & operator>>(istream &in, data &r){
-	in >> fname >> lname >> num;
+	in >> r.fname >> r.lname >> r.num;
 }
 
 ostream & operator<<(ostream &out, const data &r){
@@ -25,4 +26,14 @@ ostream & operator<<(ostream &out, const data &r){
 }
 
 
-void printlist(
+void printlist(vector<data> v){
+	for(int i =0; i < v.end(), i++){
+	}
+};
+
+int main(inr argc, char *argv[]){
+	ifstream fin;
+	fin.open(argv[2]);
+
+}
+

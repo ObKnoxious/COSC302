@@ -1,0 +1,593 @@
+FUNCTION  airline#statusline()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline.vim:190
+Called 3 times
+Total time:   0.000204
+ Self time:   0.000204
+
+count  total (s)   self (s)
+    3              0.000099   if has_key(s:contexts, a:winnr)
+    3              0.000089     return '%{airline#check_mode('.a:winnr.')}'.s:contexts[a:winnr].line
+                              endif
+                              " in rare circumstances this happens...see #276
+                              return ''
+
+FUNCTION  airline#check_mode()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline.vim:199
+Called 3 times
+Total time:   0.001492
+ Self time:   0.001492
+
+count  total (s)   self (s)
+    3              0.000051   if !has_key(s:contexts, a:winnr)
+                                return ''
+    3              0.000012   endif
+    3              0.000045   let context = s:contexts[a:winnr]
+                            
+    3              0.000039   if get(w:, 'airline_active', 1)
+    3              0.000036     let l:m = mode(1)
+    3              0.000023     if l:m ==# "i"
+                                  let l:mode = ['insert']
+    3              0.000031     elseif l:m[0] ==# "i"
+                                  let l:mode = ['insert']
+    3              0.000015     elseif l:m ==# "Rv"
+                                  let l:mode =['replace']
+    3              0.000019     elseif l:m[0] ==# "R"
+                                  let l:mode = ['replace']
+    3              0.000096     elseif l:m[0] =~# '\v(v|V||s|S|)'
+                                  let l:mode = ['visual']
+    3              0.000014     elseif l:m ==# "t"
+                                  let l:mode = ['terminal']
+    3              0.000020     elseif l:m[0] ==# "c"
+                                  let l:mode = ['commandline']
+    3              0.000015     elseif l:m ==# "no"   " does not work, most likely, Vim does not refresh the statusline in OP mode
+                                  let l:mode = ['normal']
+    3              0.000028     elseif l:m[0:1] ==# 'ni'
+                                  let l:mode = ['insert']
+                                  let l:m = 'ni'
+    3              0.000009     else
+    3              0.000030       let l:mode = ['normal']
+    3              0.000010     endif
+    3              0.000054     if exists("*VMInfos") && !empty(VMInfos())
+                                  " Vim plugin Multiple Cursors https://github.com/mg979/vim-visual-multi
+                                  let l:m = 'multi'
+    3              0.000010     endif
+    3              0.000062     if index(['Rv', 'no', 'ni', 'ix', 'ic', 'multi'], l:m) == -1
+    3              0.000029       let l:m = l:m[0]
+    3              0.000010     endif
+    3              0.000053     let w:airline_current_mode = get(g:airline_mode_map, l:m, l:m)
+                              else
+                                let l:mode = ['inactive']
+                                let w:airline_current_mode = get(g:airline_mode_map, '__')
+    3              0.000009   endif
+                            
+    3              0.000040   if g:airline_detect_modified && &modified
+                                call add(l:mode, 'modified')
+    3              0.000008   endif
+                            
+    3              0.000020   if g:airline_detect_paste && &paste
+                                call add(l:mode, 'paste')
+    3              0.000008   endif
+                            
+    3              0.000045   if g:airline_detect_crypt && exists("+key") && !empty(&key)
+                                call add(l:mode, 'crypt')
+    3              0.000008   endif
+                            
+    3              0.000021   if g:airline_detect_spell && &spell
+                                call add(l:mode, 'spell')
+    3              0.000006   endif
+                            
+    3              0.000019   if &readonly || ! &modifiable
+                                call add(l:mode, 'readonly')
+    3              0.000007   endif
+                            
+    3              0.000048   let mode_string = join(l:mode)
+    3              0.000043   if get(w:, 'airline_lastmode', '') != mode_string
+                                call airline#highlighter#highlight_modified_inactive(context.bufnr)
+                                call airline#highlighter#highlight(l:mode, context.bufnr)
+                                call airline#util#doautocmd('AirlineModeChanged')
+                                let w:airline_lastmode = mode_string
+    3              0.000008   endif
+                            
+    3              0.000013   return ''
+
+FUNCTION  airline#util#append()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/util.vim:49
+Called 21 times
+Total time:   0.000692
+ Self time:   0.000692
+
+count  total (s)   self (s)
+   21              0.000158   if a:minwidth > 0 && airline#util#winwidth() < a:minwidth
+                                return ''
+   21              0.000040   endif
+   21              0.000188   let prefix = s:spc == "\ua0" ? s:spc : s:spc.s:spc
+   21              0.000198   return empty(a:text) ? '' : prefix.g:airline_left_alt_sep.s:spc.a:text
+
+FUNCTION  airline#parts#filetype()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:102
+Called 3 times
+Total time:   0.000270
+ Self time:   0.000146
+
+count  total (s)   self (s)
+    3   0.000263   0.000139   return (airline#util#winwidth() < 90 && strlen(&filetype) > 3) ? matchstr(&filetype, '...'). (&encoding is? 'utf-8' ? '…' : '>') : &filetype
+
+FUNCTION  airline#parts#iminsert()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:82
+Called 3 times
+Total time:   0.000063
+ Self time:   0.000063
+
+count  total (s)   self (s)
+    3              0.000024   if g:airline_detect_iminsert && &iminsert && exists('b:keymap_name')
+                                return toupper(b:keymap_name)
+    3              0.000007   endif
+    3              0.000009   return ''
+
+FUNCTION  48()
+    Defined: ~/.vim/bundle/syntastic/plugin/syntastic/loclist.vim:10
+Called 6 times
+Total time:   0.000740
+ Self time:   0.000740
+
+count  total (s)   self (s)
+    6              0.000209     let newObj = copy(self)
+                            
+    6              0.000098     let llist = filter(copy(a:rawLoclist), 'v:val["valid"]')
+                            
+    6              0.000045     for e in llist
+                                    if get(e, 'type', '') ==# ''
+                                        let e['type'] = 'E'
+                                    endif
+    6              0.000021     endfor
+                            
+    6              0.000049     let newObj._rawLoclist = llist
+    6              0.000032     let newObj._name = ''
+    6              0.000049     let newObj._owner = bufnr('')
+    6              0.000029     let newObj._sorted = 0
+    6              0.000046     let newObj._columns = g:syntastic_cursor_columns
+                            
+    6              0.000026     return newObj
+
+FUNCTION  49()
+    Defined: ~/.vim/bundle/syntastic/plugin/syntastic/loclist.vim:30
+Called 6 times
+Total time:   0.001404
+ Self time:   0.000540
+
+count  total (s)   self (s)
+    6              0.000071     let buf = a:0 ? a:1 : bufnr('')
+    6   0.000290   0.000166     let loclist = syntastic#util#getbufvar(buf, 'syntastic_loclist', {})
+    6              0.000092     if type(loclist) != type({}) || empty(loclist)
+    6              0.000035         unlet! loclist
+    6   0.000855   0.000115         let loclist = g:SyntasticLoclist.New([])
+    6              0.000016     endif
+    6              0.000022     return loclist
+
+FUNCTION  airline#util#wrap()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/util.vim:42
+Called 21 times
+Total time:   0.000428
+ Self time:   0.000428
+
+count  total (s)   self (s)
+   21              0.000208   if a:minwidth > 0 && airline#util#winwidth() < a:minwidth
+                                return ''
+   21              0.000047   endif
+   21              0.000080   return a:text
+
+FUNCTION  airline#extensions#whitespace#check()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/extensions/whitespace.vim:64
+Called 3 times
+Total time:   0.001516
+ Self time:   0.001219
+
+count  total (s)   self (s)
+    3              0.000040   let max_lines = get(g:, 'airline#extensions#whitespace#max_lines', 20000)
+    3              0.000062   if &readonly || !&modifiable || !s:enabled || line('$') > max_lines || get(b:, 'airline_whitespace_disabled', 0)
+                                return ''
+    3              0.000006   endif
+    3              0.000061   let skip_check_ft = extend(s:skip_check_ft, get(g:, 'airline#extensions#whitespace#skip_indent_check_ft', {}), 'force')
+                            
+    3              0.000033   if !exists('b:airline_whitespace_check')
+                                let b:airline_whitespace_check = ''
+                                let checks = get(b:, 'airline_whitespace_checks', get(g:, 'airline#extensions#whitespace#checks', s:default_checks))
+                            
+                                let trailing = 0
+                                let check = 'trailing'
+                                if index(checks, check) > -1 && index(get(skip_check_ft, &ft, []), check) < 0
+                                  try
+                                    let regexp = get(g:, 'airline#extensions#whitespace#trailing_regexp', '\s$')
+                                    let trailing = search(regexp, 'nw')
+                                  catch
+                                    call airline#util#warning(printf('Whitespace: error occurred evaluating "%s"', regexp))
+                                    echomsg v:exception
+                                    return ''
+                                  endtry
+                                endif
+                            
+                                let mixed = 0
+                                let check = 'indent'
+                                if index(checks, check) > -1 && index(get(skip_check_ft, &ft, []), check) < 0
+                                  let mixed = s:check_mixed_indent()
+                                endif
+                            
+                                let mixed_file = ''
+                                let check = 'mixed-indent-file'
+                                if index(checks, check) > -1 && index(get(skip_check_ft, &ft, []), check) < 0
+                                  let mixed_file = s:check_mixed_indent_file()
+                                endif
+                            
+                                let long = 0
+                                if index(checks, 'long') > -1 && &tw > 0
+                                  let long = search('\%>'.&tw.'v.\+', 'nw')
+                                endif
+                            
+                                let conflicts = 0
+                                if index(checks, 'conflicts') > -1
+                                  let conflicts = s:conflict_marker()
+                                endif
+                            
+                                if trailing != 0 || mixed != 0 || long != 0 || !empty(mixed_file) || conflicts != 0
+                                  let b:airline_whitespace_check = s:symbol
+                                  if strlen(s:symbol) > 0
+                                    let space = (g:airline_symbols.space)
+                                  else
+                                    let space = ''
+                                  endif
+                            
+                                  if s:show_message
+                                    if trailing != 0
+                                      let trailing_fmt = get(g:, 'airline#extensions#whitespace#trailing_format', '[%s]trailing')
+                                      let b:airline_whitespace_check .= space.printf(trailing_fmt, trailing)
+                                    endif
+                                    if mixed != 0
+                                      let mixed_indent_fmt = get(g:, 'airline#extensions#whitespace#mixed_indent_format', '[%s]mixed-indent')
+                                      let b:airline_whitespace_check .= space.printf(mixed_indent_fmt, mixed)
+                                    endif
+                                    if long != 0
+                                      let long_fmt = get(g:, 'airline#extensions#whitespace#long_format', '[%s]long')
+                                      let b:airline_whitespace_check .= space.printf(long_fmt, long)
+                                    endif
+                                    if !empty(mixed_file)
+                                      let mixed_indent_file_fmt = get(g:, 'airline#extensions#whitespace#mixed_indent_file_format', '[%s]mix-indent-file')
+                                      let b:airline_whitespace_check .= space.printf(mixed_indent_file_fmt, mixed_file)
+                                    endif
+                                    if conflicts != 0
+                                      let conflicts_fmt = get(g:, 'airline#extensions#whitespace#conflicts_format', '[%s]conflicts')
+                                      let b:airline_whitespace_check .= space.printf(conflicts_fmt, conflicts)
+                                    endif
+                                  endif
+                                endif
+    3              0.000006   endif
+    3   0.000374   0.000077   return airline#util#shorten(b:airline_whitespace_check, 120, 9)
+
+FUNCTION  syntastic#util#getbufvar()
+    Defined: ~/.vim/bundle/syntastic/autoload/syntastic/util.vim:126
+Called 6 times
+Total time:   0.000124
+ Self time:   0.000124
+
+count  total (s)   self (s)
+    6              0.000115     return a:0 ? s:_getbufvar(a:buf, a:name, a:1) : getbufvar(a:buf, a:name)
+
+FUNCTION  airline#extensions#syntastic#get()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/extensions/syntastic.vim:22
+Called 6 times
+Total time:   0.003585
+ Self time:   0.000613
+
+count  total (s)   self (s)
+    6              0.000072   let _backup = get(g:, 'syntastic_stl_format', '')
+    6              0.000048   let is_err = (a:type  is# 'error')
+    6              0.000021   if is_err
+    3              0.000040     let g:syntastic_stl_format = get(g:, 'airline#extensions#syntastic#stl_format_err', '%E{[%fe(#%e)]}')
+    3              0.000007   else
+    3              0.000037     let g:syntastic_stl_format = get(g:, 'airline#extensions#syntastic#stl_format_warn', '%W{[%fw(#%w)]}')
+    6              0.000014   endif
+    6   0.003110   0.000138   let cnt = SyntasticStatuslineFlag()
+    6              0.000042   if !empty(_backup)
+    6              0.000043     let g:syntastic_stl_format = _backup
+    6              0.000014   endif
+    6              0.000033   if empty(cnt)
+    6              0.000021     return ''
+                              else
+                                return (is_err ? s:error_symbol : s:warning_symbol).cnt
+                              endif
+
+FUNCTION  airline#parts#crypt()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:59
+Called 3 times
+Total time:   0.000061
+ Self time:   0.000061
+
+count  total (s)   self (s)
+    3              0.000056   return g:airline_detect_crypt && exists("+key") && !empty(&key) ? g:airline_symbols.crypt : ''
+
+FUNCTION  airline#extensions#syntastic#get_error()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/extensions/syntastic.vim:18
+Called 3 times
+Total time:   0.001799
+ Self time:   0.000079
+
+count  total (s)   self (s)
+    3   0.001795   0.000075   return airline#extensions#syntastic#get('error')
+
+FUNCTION  airline#parts#ffenc()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:108
+Called 3 times
+Total time:   0.000356
+ Self time:   0.000356
+
+count  total (s)   self (s)
+    3              0.000038   let expected = get(g:, 'airline#parts#ffenc#skip_expected_string', '')
+    3              0.000021   let bomb     = &bomb ? '[BOM]' : ''
+    3              0.000057   let noeolf   = &eol ? '' : '[!EOL]'
+    3              0.000104   let ff       = strlen(&ff) ? '['.&ff.']' : ''
+    3              0.000058   if expected is# &fenc.bomb.noeolf.ff
+                                return ''
+    3              0.000008   else
+    3              0.000047     return &fenc.bomb.noeolf.ff
+                              endif
+
+FUNCTION  airline#util#ignore_buf()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/util.vim:136
+Called 3 times
+Total time:   0.000422
+ Self time:   0.000422
+
+count  total (s)   self (s)
+    3              0.000075   let pat = '\c\v'. get(g:, 'airline#ignore_bufadd_pat', ''). get(g:, 'airline#extensions#tabline#ignore_bufadd_pat',  '!|defx|gundo|nerd_tree|startify|tagbar|term://|undotree|vimfiler')
+    3              0.000338   return match(a:name, pat) > -1
+
+FUNCTION  airline#util#winwidth()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/util.vim:19
+Called 9 times
+Total time:   0.000348
+ Self time:   0.000348
+
+count  total (s)   self (s)
+    9              0.000113   let nr = get(a:000, 0, 0)
+    9              0.000079   if get(g:, 'airline_statusline_ontop', 0)
+                                return &columns
+    9              0.000025   else
+    9              0.000073     return winwidth(nr)
+                              endif
+
+FUNCTION  airline#parts#paste()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:63
+Called 3 times
+Total time:   0.000031
+ Self time:   0.000031
+
+count  total (s)   self (s)
+    3              0.000027   return g:airline_detect_paste && &paste ? g:airline_symbols.paste : ''
+
+FUNCTION  airline#parts#readonly()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:89
+Called 3 times
+Total time:   0.000639
+ Self time:   0.000217
+
+count  total (s)   self (s)
+                              " only consider regular buffers (e.g. ones that represent actual files,
+                              " but not special ones like e.g. NERDTree)
+    3   0.000532   0.000110   if !empty(&buftype) || airline#util#ignore_buf(bufname('%'))
+                                return ''
+    3              0.000008   endif
+    3              0.000030   if &readonly && !filereadable(bufname('%'))
+                                return '[noperm]'
+    3              0.000007   else
+    3              0.000018     return &readonly ? g:airline_symbols.readonly : ''
+                              endif
+
+FUNCTION  <SNR>85_ws_refresh()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/extensions/whitespace.vim:185
+Called 1 time
+Total time:   0.000030
+ Self time:   0.000030
+
+count  total (s)   self (s)
+    1              0.000021   if get(b:, 'airline_ws_changedtick', 0) == b:changedtick
+    1              0.000004     return
+                              endif
+                              unlet! b:airline_whitespace_check
+                              if get(g:, 'airline_skip_empty_sections', 0)
+                                exe ':AirlineRefresh!'
+                              endif
+                              let b:airline_ws_changedtick = b:changedtick
+
+FUNCTION  airline#parts#spell()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:67
+Called 3 times
+Total time:   0.000258
+ Self time:   0.000258
+
+count  total (s)   self (s)
+    3              0.000108   let spelllang = g:airline_detect_spelllang ? printf(" [%s]", toupper(substitute(&spelllang, ',', '/', 'g'))) : ''
+    3              0.000020   if g:airline_detect_spell && &spell
+                                let winwidth = airline#util#winwidth()
+                                if winwidth >= 90
+                                  return g:airline_symbols.spell . spelllang
+                                elseif winwidth >= 70
+                                  return g:airline_symbols.spell
+                                else
+                                  return split(g:airline_symbols.spell, '\zs')[0]
+                                endif
+    3              0.000007   endif
+    3              0.000010   return ''
+
+FUNCTION  airline#parts#mode()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/parts.vim:55
+Called 3 times
+Total time:   0.000480
+ Self time:   0.000150
+
+count  total (s)   self (s)
+    3   0.000474   0.000144   return airline#util#shorten(get(w:, 'airline_current_mode', ''), 79, 1)
+
+FUNCTION  airline#util#shorten()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/util.vim:28
+Called 6 times
+Total time:   0.000627
+ Self time:   0.000403
+
+count  total (s)   self (s)
+    6   0.000405   0.000181   if airline#util#winwidth() < a:winwidth && len(split(a:text, '\zs')) > a:minwidth
+                                if get(a:000, 0, 0)
+                                  " shorten from tail
+                                  return '…'.matchstr(a:text, '.\{'.a:minwidth.'}$')
+                                else
+                                  " shorten from beginning of string
+                                  return matchstr(a:text, '^.\{'.a:minwidth.'}').'…'
+                                endif
+    6              0.000014   else
+    6              0.000026     return a:text
+                              endif
+
+FUNCTION  airline#extensions#keymap#status()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/extensions/keymap.vim:10
+Called 3 times
+Total time:   0.000377
+ Self time:   0.000377
+
+count  total (s)   self (s)
+    3              0.000064   if (get(g:, 'airline#extensions#keymap#enabled', 1) && has('keymap'))
+    3              0.000043     let short_codes = get(g:, 'airline#extensions#keymap#short_codes', {})
+    3              0.000040     let label = get(g:, 'airline#extensions#keymap#label', g:airline_symbols.keymap)
+    3              0.000029     let default = get(g:, 'airline#extensions#keymap#default', '')
+    3              0.000015     if (label !=# '')
+    3              0.000028       let label .= ' '
+    3              0.000008     endif
+    3              0.000016     let keymap = &keymap
+    3              0.000024     if has_key(short_codes, keymap)
+                                  let keymap = short_codes[keymap]
+    3              0.000007     endif
+    3              0.000071     return printf('%s', (!empty(keymap) && &iminsert ? (label . keymap) : (!empty(default) ? label . default : default)))
+                              else
+                                return ''
+                              endif
+
+FUNCTION  58()
+    Defined: ~/.vim/bundle/syntastic/plugin/syntastic/loclist.vim:84
+Called 6 times
+Total time:   0.001328
+ Self time:   0.001328
+
+count  total (s)   self (s)
+    6              0.000061     if !exists('self._stl_format')
+    6              0.000036         let self._stl_format = ''
+    6              0.000014     endif
+    6              0.000044     if !exists('self._stl_flag')
+    6              0.000029         let self._stl_flag = ''
+    6              0.000013     endif
+                            
+    6              0.000045     if g:syntastic_stl_format !=# self._stl_format
+    6              0.000041         let self._stl_format = g:syntastic_stl_format
+                            
+    6              0.000041         if !empty(self._rawLoclist)
+                                        let errors = self.errors()
+                                        let warnings = self.warnings()
+                            
+                                        let num_errors = len(errors)
+                                        let num_warnings = len(warnings)
+                                        let num_issues = len(self._rawLoclist)
+                            
+                                        let output = self._stl_format
+                            
+                                        "hide stuff wrapped in %E(...) unless there are errors
+                                        let output = substitute(output, '\m\C%E{\([^}]*\)}', num_errors ? '\1' : '' , 'g')
+                            
+                                        "hide stuff wrapped in %W(...) unless there are warnings
+                                        let output = substitute(output, '\m\C%W{\([^}]*\)}', num_warnings ? '\1' : '' , 'g')
+                            
+                                        "hide stuff wrapped in %B(...) unless there are both errors and warnings
+                                        let output = substitute(output, '\m\C%B{\([^}]*\)}', (num_warnings && num_errors) ? '\1' : '' , 'g')
+                            
+                                        let flags = { '%':  '%', 't':  num_issues, 'e':  num_errors, 'w':  num_warnings, 'N':  (num_issues ? fnamemodify( bufname(self._rawLoclist[0]['bufnr']), ':t') : ''), 'P':  (num_issues ? fnamemodify( bufname(self._rawLoclist[0]['bufnr']), ':p:~:.') : ''), 'F':  (num_issues ? self._rawLoclist[0]['lnum'] : ''), 'ne': (num_errors ? fnamemodify( bufname(errors[0]['bufnr']), ':t') : ''), 'pe': (num_errors ? fnamemodify( bufname(errors[0]['bufnr']), ':p:~:.') : ''), 'fe': (num_errors ? errors[0]['lnum'] : ''), 'nw': (num_warnings ? fnamemodify( bufname(warnings[0]['bufnr']), ':t') : ''), 'pw': (num_warnings ? fnamemodify( bufname(warnings[0]['bufnr']), ':p:~:.') : ''), 'fw': (num_warnings ? warnings[0]['lnum'] : '') }
+                                        let output = substitute(output, '\v\C\%(-?\d*%(\.\d+)?)([npf][ew]|[NPFtew%])', '\=syntastic#util#wformat(submatch(1), flags[submatch(2)])', 'g')
+                            
+                                        let self._stl_flag = output
+    6              0.000017         else
+    6              0.000027             let self._stl_flag = ''
+    6              0.000014         endif
+    6              0.000011     endif
+                            
+    6              0.000029     return self._stl_flag
+
+FUNCTION  SyntasticStatuslineFlag()
+    Defined: ~/.vim/bundle/syntastic/plugin/syntastic.vim:697
+Called 6 times
+Total time:   0.002972
+ Self time:   0.000240
+
+count  total (s)   self (s)
+    6   0.002967   0.000235     return g:SyntasticLoclist.current().getStatuslineFlag()
+
+FUNCTION  airline#extensions#syntastic#get_warning()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/extensions/syntastic.vim:14
+Called 3 times
+Total time:   0.001954
+ Self time:   0.000089
+
+count  total (s)   self (s)
+    3   0.001950   0.000085   return airline#extensions#syntastic#get('warning')
+
+FUNCTION  airline#util#prepend()
+    Defined: ~/.vim/bundle/vim-airline/autoload/airline/util.vim:63
+Called 15 times
+Total time:   0.000324
+ Self time:   0.000324
+
+count  total (s)   self (s)
+   15              0.000106   if a:minwidth > 0 && airline#util#winwidth() < a:minwidth
+                                return ''
+   15              0.000029   endif
+   15              0.000125   return empty(a:text) ? '' : a:text.s:spc.g:airline_right_alt_sep.s:spc
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+    6   0.003585   0.000613  airline#extensions#syntastic#get()
+    6   0.002972   0.000240  SyntasticStatuslineFlag()
+    3   0.001954   0.000089  airline#extensions#syntastic#get_warning()
+    3   0.001799   0.000079  airline#extensions#syntastic#get_error()
+    3   0.001516   0.001219  airline#extensions#whitespace#check()
+    3   0.001492             airline#check_mode()
+    6   0.001404   0.000540  49()
+    6   0.001328             58()
+    6   0.000740             48()
+   21   0.000692             airline#util#append()
+    3   0.000639   0.000217  airline#parts#readonly()
+    6   0.000627   0.000403  airline#util#shorten()
+    3   0.000480   0.000150  airline#parts#mode()
+   21   0.000428             airline#util#wrap()
+    3   0.000422             airline#util#ignore_buf()
+    3   0.000377             airline#extensions#keymap#status()
+    3   0.000356             airline#parts#ffenc()
+    9   0.000348             airline#util#winwidth()
+   15   0.000324             airline#util#prepend()
+    3   0.000270   0.000146  airline#parts#filetype()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+    3              0.001492  airline#check_mode()
+    6              0.001328  58()
+    3   0.001516   0.001219  airline#extensions#whitespace#check()
+    6              0.000740  48()
+   21              0.000692  airline#util#append()
+    6   0.003585   0.000613  airline#extensions#syntastic#get()
+    6   0.001404   0.000540  49()
+   21              0.000428  airline#util#wrap()
+    3              0.000422  airline#util#ignore_buf()
+    6   0.000627   0.000403  airline#util#shorten()
+    3              0.000377  airline#extensions#keymap#status()
+    3              0.000356  airline#parts#ffenc()
+    9              0.000348  airline#util#winwidth()
+   15              0.000324  airline#util#prepend()
+    3              0.000258  airline#parts#spell()
+    6   0.002972   0.000240  SyntasticStatuslineFlag()
+    3   0.000639   0.000217  airline#parts#readonly()
+    3              0.000204  airline#statusline()
+    3   0.000480   0.000150  airline#parts#mode()
+    3   0.000270   0.000146  airline#parts#filetype()
+
