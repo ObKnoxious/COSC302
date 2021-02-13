@@ -47,9 +47,9 @@ data::data(string fn, string ln, string nm){
 //};
 
 istream & operator>>(istream &in, data &r){
-	in >> r.fname >> r.lname >> r.num;
-	//in >> r.lname;
-	//in >> r.num;
+	in >> r.fname;
+	in >> r.lname;
+	in >> r.num;
 	return in;
 }
 
@@ -71,63 +71,50 @@ void printlist(vector<data> v){
 	}
 };
 
-//int partition(vector<data> &v, int l, int h){
-	//data pivot = v[h];
-	//int i = (l-1);
-	//for(int j = l; j <= h -1; j++){
-		//if(v[j] < pivot){
-			//i++;
-			//swap(v[i], v[j]);
-		//}
+//int partition(vector<data> &v, int left, int right){
+	//if((right - left +1)<=3){
+		//return (left+right)/2;
 	//}
-	//swap(v[i+1], v[h]);
-	//return (i+1);
+	//int pindex = (right+left)/2;
+	//data pivot = v[pindex];
+	//swap(v[pindex],v[right-1]);
 //}
 
-void quickselect(vector<data> &v,int left, int right,  int k){
-	//int left =0;
-	//int right = v.size()-1;
-	while(left!=right){
-		swap(v[int(rand() % (right-left) + left)], v[right]);
-		data pivot = v[right];
-		
-		int i = (left-1);
-		for(int j = left; j <= right -1; j++){
-			if(v[j] < pivot){
-				i++;
-				swap(v[i], v[j]);
-			}
-		}
-		swap(v[i+1], v[right]);
-		int pindex = i+1;
-		if(pindex == k){
-			return;
-		}
-		if(k < pindex){
-			right = pindex-1;
-		}else{
-			left=pindex+1;
+//void quicksort(vector<data> &v, int left, int right){
+	//cout << "Good news matey quicksort is recurring!\n";
+	//if((right - left +1)<=3){
+		//return (left+right)/2;
+	//}
+	//int pindex = (right+left)/2;
+	//data pivot = v[pindex];
+	//swap(v[pindex],v[right-1]);
+	//quicksort(v, left, pindex-1);
+	//quicksort(v, pindex+1, right);
+//}
+
+//void quicksort(vector<data> &v, int n){
+	//cout << "Aye sailor you called quicksort!\n";
+	//quicksort(v, 0, n-1);
+//}
+//
+int partition(vector<data>, int l, int h){
+	int pivot = v[h];
+	int i = (low-1);
+	for(int j = l; j <= h -1; j++){
+		if(arr[j] < pivot){
+			i++;
+			swap(&v[i], &v[j]);
 		}
 	}
+	swap(&v[i+1], &v[h]);
+	return (i+1);
 }
 
-void quicksort(vector<data> &v, int l, int h){
+void quicksort(vector<data> v, int l, int h){
 	if(l<h){
-	//cout << "Great news, you are inside quicksort!\n";
-		swap(v[int(rand() % (h-l) + l)], v[h]);
-		data pivot = v[h];
-		
-		int i = (l-1);
-		for(int j = l; j <= h -1; j++){
-			if(v[j] < pivot){
-				i++;
-				swap(v[i], v[j]);
-			}
-		}
-		swap(v[i+1], v[h]);
-		int pindex = i+1;
+		int pindex = partition(v, l, h);
 		quicksort(v, l, pindex-1);
-		quicksort(v, pindex+1, h);
+		quicksort(v, pindex-1, h);
 	}
 }
 
@@ -141,37 +128,19 @@ int main(int argc, char *argv[]){
 		//cout << "Args valid\n";
 		ifstream fin;
 		fin.open(argv[argc-1]);
-		//string ifn, iln, ipn;
+		string ifn, iln, ipn;
 		vector<data> h;
-		//while(fin >> ifn >> iln >> ipn){
-			//data d = data(ifn, iln, ipn);
-			////cout << d;
-			//h.push_back(d);
-		//}
-		data d;
-		while(fin >> d){
-			h.push_back(d);	
+		while(fin >> ifn >> iln >> ipn){
+			data d = data(ifn, iln, ipn);
+			//cout << d;
+			h.push_back(d);
 		}
 		if(string(argv[1]) == "-stl"){
 			stable_sort(h.begin(), h.end());
 		}
 		if(string(argv[1]) == "-rpivot"){
-			//cout << "Congrats sailor you used Rpivot!\n";
-			quicksort(h, 0, h.size()-1);
-		}
-		if(argc == 5){
-			int ko = atoi(argv[2]);
-			int kone = atoi(argv[3]);
-			if(ko < 0){
-				ko = 0;
-			}
-			if(kone > h.size()-1){
-				kone = h.size()-1;
-			}
-			quickselect(h, 0, ko, h.size()-1);
-			quickselect(h, ko, kone, h.size()-1);
-			quicksort(h, ko, kone);
-
+			cout << "Congrats sailor you used Rpivot!\n";
+			//quicksort(h, (rand() % h.size()));
 		}
 		printlist(h);
 	}else{
@@ -179,3 +148,4 @@ int main(int argc, char *argv[]){
 	}
 
 }
+
