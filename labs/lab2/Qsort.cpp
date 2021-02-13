@@ -84,31 +84,71 @@ void printlist(vector<data> v){
 	//return (i+1);
 //}
 
-void quickselect(vector<data> &v,int left, int right,  int k){
-	//int left =0;
-	//int right = v.size()-1;
-	while(left!=right){
-		swap(v[int(rand() % (right-left) + left)], v[right]);
-		data pivot = v[right];
+void quickselect(vector<data> &v,int left, int k,  int right){
+	//left =0;
+	//right = v.size()-1;
+	//while(right>left){
+		//swap(v[int(rand() % (right-left) + left)], v[right]);
+		//data pivot = v[right];
 		
-		int i = (left-1);
-		for(int j = left; j <= right -1; j++){
-			if(v[j] < pivot){
+		//int i = (left-1);
+		//for(int j = left; j <= right -1; j++){
+			//if(v[j] < pivot){
+				//i++;
+				//swap(v[i], v[j]);
+			//}
+		//}
+		//swap(v[i+1], v[right]);
+		//int pindex = i+1;
+		//if(pindex == k){
+			//return;
+		//}
+		//if(k < pindex){
+			//right = pindex-1;
+		//}else{
+			//left=pindex+1;
+		//}
+	//}
+	while(left < right){
+		int n = right -left;
+		int pindex = left + rand() % n;
+		//cout << "left " << left << " right " << right  << " pindex " << pindex << "\n";
+		data pivot = v[pindex];
+		swap(v[pindex], v[right]);
+		//int pindex = left + rand() & (right -left);
+		//
+		//data pivot = v[pindex];
+		//swap(v[pindex], v[right]);
+		int i = left;
+		int j = right-1;
+		while(true){
+			while(v[i] < pivot){
 				i++;
-				swap(v[i], v[j]);
 			}
+			while(pivot < v[j]){
+				j--;
+				if(j<=0){
+					break;
+				}
+			}
+			if(i>=j){
+				break;
+			}
+			swap(v[i],v[j]);
 		}
-		swap(v[i+1], v[right]);
-		int pindex = i+1;
+		pindex=i;
+		swap(v[pindex], v[right]);
 		if(pindex == k){
 			return;
 		}
 		if(k < pindex){
-			right = pindex-1;
+			right = pindex -1;
 		}else{
-			left=pindex+1;
+			left = pindex+1;
 		}
+		
 	}
+	
 }
 
 void quicksort(vector<data> &v, int l, int h){
@@ -152,14 +192,14 @@ int main(int argc, char *argv[]){
 		while(fin >> d){
 			h.push_back(d);	
 		}
+		fin.close();
 		if(string(argv[1]) == "-stl"){
-			stable_sort(h.begin(), h.end());
-		}
-		if(string(argv[1]) == "-rpivot"){
+			sort(h.begin(), h.end());
+		}else if(string(argv[1]) == "-rpivot" && argc != 5){
 			//cout << "Congrats sailor you used Rpivot!\n";
 			quicksort(h, 0, h.size()-1);
-		}
-		if(argc == 5){
+		}else if(argc == 5 && string(argv[1]) == "-rpivot"){
+			//quicksort(h, 0, h.size()-1);
 			int ko = atoi(argv[2]);
 			int kone = atoi(argv[3]);
 			if(ko < 0){

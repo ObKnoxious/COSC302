@@ -1,1 +1,0 @@
-usage: ./Qsort -stl | -rpivot [k0 k1] file.tx
