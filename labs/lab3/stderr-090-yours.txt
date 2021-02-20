@@ -1,0 +1,1 @@
+usage: ./Slist -mergesort|quicksort|qsort_r3 file.txt

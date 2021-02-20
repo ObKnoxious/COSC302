@@ -3,82 +3,50 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
+#include <algorithm>
 // include header file(s) needed
-
+using namespace std;
 // qsort_r3: randomly chosen pivot, 3-way partition {<},{=},{>}
 
 
 
-class data{
-	public:
-		friend istream & operator>>(istream &, data &);
-		friend ostream & operator<<(ostream &, const data &);
-		data(){};
-		data(string fn, string ln, string nm);
-		bool operator <(const data& d) const{
-			if(this->lname == d.lname){
-				if(this->fname == d.fname){
-					return this->num < d.num;
-				}
-				return this->fname < d.fname;
-			}
-			return lname < d.lname;
-		};
-
-	private:
-		string fname;
-		string lname;
-		string num;
-};
-data::data(string fn, string ln, string nm){
-	fname = fn;
-	lname = ln;
-	num = nm;
-};
-istream & operator>>(istream &in, data &r){
-	in >> r.fname >> r.lname >> r.num;
-	//in >> r.lname;
-	//in >> r.num;
-	return in;
-}
-
-
-ostream & operator<<(ostream &out, const data &r){
-	out << r.lname <<", " << r.fname;
-	int l = 24 - (r.fname.length() + r.lname.length() +2);
-	for (int i = 0; i < l; i++){
-		out << " ";
-	}
-	out << r.num << "\n";
-	return out;
-}
-
-
-void printlist(vector<data> v){
-	for(int i =0; i < v.size(); i++){
-		cout << v.at(i);
-	}
-};
 // template <typename T>
 template <class T>
 class slist {
 	private:
 		struct node {
 			node() { data = T(); next = NULL; }
-			node(const data &d){
-				T = d;
+			node(const T &d){
+				data = d;
 				next = NULL;
 			}
-			//operator <(const node& n) const{
 
 			// add node(const T &key) { write this }
 			// add overloaded operator< code
 
 			T data;
 			node *next;
+			bool operator <(const node& n) const{
+				return data < n.data;
+			}
 		};
 
 		// add class sptr { write this for node data }
+		class sptr {
+			public:
+				sptr(node * _ptr=NULL){
+					ptr = _ptr;
+				}
+
+				bool operator< (const sptr &rhs) const {
+					return *ptr < **rhs;
+				}
+				node* operator* () const {
+					return ptr;
+				}
+			private:
+				node *ptr;
+		};
 
 	public:
 		class iterator {
@@ -138,6 +106,27 @@ void slist<T>::push_back(const T &din) {
 template <typename T>
 void slist<T>::sort(const string &algname) {
 	// determine number of list elements
+	//cout << "I'm in the sort funciton!\n";
+	vector<sptr> Ap;
+	node* p = head->next;
+	while(p != NULL){
+		//cout << "This is the while pushing into the sptr vector\n";
+		Ap.push_back(p);
+		p=p->next;
+	}
+	if(algname == "q"){
+
+		std::sort(Ap.begin(), Ap.end());
+	}else if(algname == "m"){
+		std::stable_sort(Ap.begin(), Ap.end());
+	}
+	p = head;
+	for(int i =0; i < Ap.size(); i++){
+		//cout << "And this is the vector trying to put it back together\n";
+		p->next = *Ap.at(i);
+		p=p->next;
+	}
+	p->next = NULL;
 	// set up smart pointer array called Ap
 	// if quicksort, apply std::sort(...)
 	// if mergesort, apply std::stable_sort(...)
