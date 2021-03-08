@@ -30,9 +30,7 @@ class PPM {
 		void read(string fn);
 		void write(string fn);
 
-		RGB *operator[](int ind) {
-			return img[ind];
-		}
+		RGB *operator[](int) {}
 
 		int get_Nrows() {
 			return rows;	
@@ -95,29 +93,25 @@ void PPM::read(string fn) {
 	rows =rw;
 	columns =cl;
 	maxi = mx;
-	//fin.get();
-	//while(fin.peek() == '\n'){
-		//fin.get();
-	//}
+	fin.get();
+	while(fin.peek() == '\n'){
+		fin.get();
+	}
 	img = new RGB*[rows];
 	for(int i=0; i< rows; i++){
 		img[i] = new RGB[columns];
 	}
-	unsigned char buffer[3*rows*columns];
-	fin.get();
-	fin.read((char*)buffer, 3*rows*columns);
-	int k =0;
+	size_t size = 3 * rw * cl;
+	char * buffer = new char[size];
+	fin.read(buffer, size);
 	for(int i =0; i<rows; i++){
 		for(int j =0; j<columns; j++){
-			//img[i][j].R = buffer[(i*rw*3) + 3 * j];
-			//img[i][j].G = buffer[(i*rw*3) + 3 * j +1];
-			//img[i][j].B = buffer[(i*rw*3) + 3 * j +2];
-			img[i][j].R = buffer[k++];
-			img[i][j].G = buffer[k++];
-			img[i][j].B = buffer[k++];
+			img[i][j].R = buffer[(i*rw*3) + 3 * j];
+			img[i][j].G = buffer[(i*rw*3) + 3 * j +1];
+			img[i][j].B = buffer[(i*rw*3) + 3 * j +2];
 		}
 	}
-	//delete[] buffer;
+	delete[] buffer;
 	fin.close();
 	
 }
@@ -139,19 +133,6 @@ void PPM::write(string fn) {
 			fout.write((char *)&img[i][j].B, 1);
 		}
 	}
-	
-	//unsigned char buf[3*rows*cols];
-	//int k =0;
-
-	//for(int i =0; i < rows; i++){
-		//for(int j =0; j < cols; j++){
-			//buf[k++] = img[i][j].G;
-			//buf[k++] = img[i][j].R;
-			//buf[k++] = img[i][j].B;
-		//}
-	//}
-		//}
-	//}
 
 }
 #endif

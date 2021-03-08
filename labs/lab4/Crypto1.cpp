@@ -3,7 +3,7 @@
 using namespace std;
 
 #include "PPM.h"
-#include "Rnumgen.h"
+//#include "Rnumgen.h"
 //#include "PPM.cpp"
 
 const char ETX = 0x3;
@@ -13,29 +13,17 @@ struct pixel {
 	int y;
 };
 
-void set_pixel_list(PPM &img, vector<pixel> &spl, int seed) {
+void set_pixel_list(PPM &img, vector<pixel> &spl) {
 	//int size = img.get_Nrows() * img.get_Ncols();
-	vector<int> v(4096,0);
-	unsigned int tmp;
-	for(int i=0; i < img.get_Nrows(); i++){
-		for(int j=0; j< img.get_Ncols(); j++){
+	for(int i=0; i < img.get_Nrows(); i+=2){
+		for(int j=0; j< img.get_Ncols(); j+=2){
 			pixel t;
 			t.x=j;
 			t.y=i;
 			spl.push_back(t);
-			tmp =0;
-			tmp |= (img[i][j].R & 0x78) << 5;
-			tmp |= (img[i][j].G & 0x78) >> 3;
-			tmp |= (img[i][j].B & 0x78) << 1;
-			v[tmp]+=1;
 		}
 	}
-	rnumgen rng(seed, v);
-	for(int i = (int)spl.size() -1; i>0; i--){
-		unsigned int a = rng.rand(), b = rng.rand();
-		unsigned int r24 = (a << 12) | b;
-		swap(spl[i], spl[r24 % (i+1)]);
-	}
+		
 }
 
 
@@ -115,21 +103,14 @@ int main(int argc, char *argv[]) {
 
 			//PPM img;
 	if(argc < 3 || argc > 6){
-		cerr << "usage: ./Crypto -encode|decode image.ppm\n";
+		cout << "usage: ./Crypto -encode|decode image.ppm\n";
 		return 1;
 	}
 	string fname = string(argv[argc-1]);
 	PPM img;	
 	img.read(fname);
-	int seed =0;	
-	char *piece = strtok(argv[2], "=");
-	if(strcmp(piece, "-seed") == 0){
-		seed = atoi(strtok(NULL, ""));
-	}else{
-		cerr <<"usage: ./Crypto -encode|decode image.ppm\n";
-	}
 	vector<pixel> spl;
-	set_pixel_list(img, spl, seed);
+	set_pixel_list(img, spl);
 	img.write(fname);	
 	//declare pixel_list
 
