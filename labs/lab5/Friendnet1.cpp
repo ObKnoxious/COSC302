@@ -7,24 +7,27 @@
 #include <time.h>
 using namespace std;
 
-//void set_oldfriends(vector <string> &name, 2D-vector-array &friends, int M0, int M1) {
-  //int N = (int)name.size();
+void set_oldfriends(vector <string> &name, vector<vector<string> > &friends, int M0, int M1) {
+  int N = (int)name.size();
   //initialize 2D-vector-array friends (hint: use vector::assign())
 
-  //for (int i=0; i<N; i++) {
+  for (int i=0; i<N; i++) {
 	//declare std::set called doknow
-
+	set<string> doknow;
 	//initialize M (random number of friends: function of M0, M1)
-
-	//while ((int)doknow.size() < M) {
+	int M = (rand() % M1) + M0;
+	while ((int)doknow.size() < M) {
 	  //compute j (random friend index: hint j != i)
+	  if(M != i){
+		doknow.insert(name.at(M);
+	  }
 	  //doknow.insert(j);
-	//}
+	}
 
 	//use iterator to sweep thru doknow set
 	//update the corresponding pairs of friends entries
-  //}
-//}
+  }
+}
 
 //void set_newfriends(2D-vector-array &friends, 2D-vector-array &new_friends) {
   //int N = (int)friends.size();
@@ -72,16 +75,21 @@ int main(int argc, char *argv[]) {
 		name.push_back(n);
 	}
 	//read strings from stdin into name vector
-
+	//for(int i =0; i < name.size(); i++){
+		//cout << name.at(i) << '\t';
+	//}
   	int M0 = 1; // min number of friends
   	int M1 = 3; // max number of friends
 
-  declare 2D-vector-array called friends
-  declare 2D-vector-array called new_friends
+  //declare 2D-vector-array called friends
+  	vector<vector<string> > friends;
+  //declare 2D-vector-array called new_friends
+	vector<vector<string> > new_friends;
+  //set_oldfriends(name, friends, M0, M1);
+  //writetofile("doknow1.txt", name, friends);
 
-  set_oldfriends(name, friends, M0, M1);
-  writetofile("doknow1.txt", name, friends);
+  //set_newfriends(friends, new_friends);
+  //writetofile("mightknow1.txt", name, new_friends);
 
-  set_newfriends(friends, new_friends);
-  writetofile("mightknow1.txt", name, new_friends);
+	}
 }
