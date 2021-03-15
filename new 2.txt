@@ -1,0 +1,3 @@
+template <typename T>
+void randperm(vector<T> &v) {
+	
