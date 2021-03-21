@@ -12,7 +12,7 @@ class city{
 		float lat;
 		float lon;
 		int popu;
-		constexpr static float rp =	M_PI/180;
+		const static float rp =	M_PI/180;
 		//const static float rp = (22/7)/180;
 	public:
 		std::string getName(){
@@ -53,8 +53,8 @@ std::istream & operator >> (std::istream &in, city &c){
 	return in;
 }
 
-std::ostream & operator << (std::ostream &out, city &c){
-	out << c.name << c.type;
+std::ostream & operator << (std::ostream &out, city &c:	out << c.name << c.type;
+	out << setw(18) << setfill(' ') << left << c.name << setw(12) << left << c.type << c.zone setw(11) << right << c.popu << setw(8) << c.lat << setw(8) << c.lon << '\n';
 	return out;
 }
 
@@ -114,6 +114,12 @@ costtable::costtable(std::vector<city> &c){
 	}
 }
 
+std::ostream cityInfo(std::vector<city> c){
+	ostream out;
+	for(unsigned int i =0; i<c.size(); i++){
+		out << setw(3) << right << i << " " << c.at(i);
+	}
+}
 
 
 int main(int argc, char *argv[]){
@@ -123,27 +129,23 @@ int main(int argc, char *argv[]){
 		//std::cout << c.at(i) << '\n';
 	//}
 	costtable ct(c);
-	if(std::string(argv[1]) == "-graphinfo"){
-					
+	if(std::string(argv[1]) == "-distance"){
+		while(true){
+			std::string c1;
+			std::string c2;
+			std::cin >>c1;
+			std::cin >>c2;
+			for(unsigned int i=0; i<c.size(); i++){
+				if(c.at(i).getName() == c1){
+					for(unsigned int j=0; j<c.size(); j++){
+						if(c.at(j).getName() == c2){
+							std::cout <<"Distance "<< ct.getDt().at(i).at(j) << "\n";
+							break;
+						}
+					}
+				}
+			}		
+		}
 	}
-	
-	//if(std::string(argv[1]) == "-distance"){
-		//while(true){
-			//std::string c1;
-			//std::string c2;
-			//std::cin >>c1;
-			//std::cin >>c2;
-			//for(unsigned int i=0; i<c.size(); i++){
-				//if(c.at(i).getName() == c1){
-					//for(unsigned int j=0; j<c.size(); j++){
-						//if(c.at(j).getName() == c2){
-							//std::cout <<"Distance "<< ct.getDt().at(i).at(j) << "\n";
-							//break;
-						//}
-					//}
-				//}
-			//}		
-		//}
-	//}
 	return 0;
 }
