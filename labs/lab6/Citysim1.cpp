@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <math.h>
+#include <iomanip>
 class city{
 	private:
 		std::string name;
@@ -53,8 +54,8 @@ std::istream & operator >> (std::istream &in, city &c){
 	return in;
 }
 
-std::ostream & operator << (std::ostream &out, city &c:	out << c.name << c.type;
-	out << setw(18) << setfill(' ') << left << c.name << setw(12) << left << c.type << c.zone setw(11) << right << c.popu << setw(8) << c.lat << setw(8) << c.lon << '\n';
+std::ostream & operator << (std::ostream &out, city &c){
+	out << std::setw(18) << std::setfill(' ') << std::left << c.name << std::setw(12) << std::left << c.type << c.zone << std::setw(11) << std::right << c.popu << std::setw(8) << std::right << std::fixed << std::setprecision(2) <<  c.lat << std::setw(8) << std::right << std::fixed << std::setprecision(2) << c.lon << '\n';
 	return out;
 }
 
@@ -65,12 +66,17 @@ void read_cityinfo(std::string fname, std::vector<city> &v){
 	city c;
 	std::string l;
 	while(std::getline(fin, l)){
-		if(l[0] == '#'){
-			continue;
+		if(l[0] != '#'){
+			std::stringstream ss(l);
+			ss >> c;
+			v.push_back(c);
+
 		}
-		std::stringstream ss(l);
-		ss >> c;
-		v.push_back(c);
+	}
+	for(unsigned int i=1; i<v.size(); i++){
+		if(v.at(i).getName() == v.at(i-1).getName()){
+			v.erase(v.begin() + i);
+		}
 	}
 	
 }
@@ -114,12 +120,13 @@ costtable::costtable(std::vector<city> &c){
 	}
 }
 
-std::ostream cityInfo(std::vector<city> c){
-	ostream out;
-	for(unsigned int i =0; i<c.size(); i++){
-		out << setw(3) << right << i << " " << c.at(i);
-	}
-}
+//std::ostream cityInfo(std::vector<city> c){
+	//std::ostream out;
+	//for(unsigned int i =0; i<c.size(); i++){
+		//out << std::setw(3) << std::right << i << " ";
+	//}
+	//return out;
+//}
 
 
 int main(int argc, char *argv[]){
@@ -129,23 +136,47 @@ int main(int argc, char *argv[]){
 		//std::cout << c.at(i) << '\n';
 	//}
 	costtable ct(c);
-	if(std::string(argv[1]) == "-distance"){
-		while(true){
-			std::string c1;
-			std::string c2;
-			std::cin >>c1;
-			std::cin >>c2;
-			for(unsigned int i=0; i<c.size(); i++){
-				if(c.at(i).getName() == c1){
-					for(unsigned int j=0; j<c.size(); j++){
-						if(c.at(j).getName() == c2){
-							std::cout <<"Distance "<< ct.getDt().at(i).at(j) << "\n";
-							break;
-						}
-					}
-				}
-			}		
+	if(std::string(argv[1]) == "-graphinfo"){
+		std::ofstream info("city_info.txt");
+		info << "CITY INFO (N=" << c.size()-1 << "):\n\n";
+		for(unsigned int i =1; i<c.size(); i++){
+			info << std::setw(3) << std::right << i-1 << " " << c.at(i);
 		}
+		info.close();
+		std::ofstream dis("city_distancetable.txt");
+		dis << "DISTANCE TABLE:\n";
+		for(unsigned int i =1; i<c.size(); i++){	
+			for(unsigned int j=1; j<i; j++){
+				//std::cout << " J: " << j << " " << c.at(j).getName() << " i: " << c.at(i).getName() << '\n';
+				std::string o = c.at(i).getName() + " to " + c.at(j).getName() + " ";
+				std::ostringstream tv;
+				tv << ct.getDt().at(i).at(j);
+				std::string tvs(tv.str());
+				std::string d = tvs + ".0 miles";
+				dis << std:: setw(3) << std::setfill(' ') << std::right << i-1 << " " << std::setw(38) << std::setfill('.') << std::left << o << std::setw(13) << std::setfill(' ') << std::right << d<< '\n';
+			
+			}
+			dis << '\n';
+		}
+		dis.close();
 	}
+	//if(std::string(argv[1]) == "-distance"){
+		//while(true){
+			//std::string c1;
+			//std::string c2;
+			//std::cin >>c1;
+			//std::cin >>c2;
+			//for(unsigned int i=0; i<c.size(); i++){
+				//if(c.at(i).getName() == c1){
+					//for(unsigned int j=0; j<c.size(); j++){
+						//if(c.at(j).getName() == c2){
+							//std::cout <<"Distance "<< ct.getDt().at(i).at(j) << "\n";
+							//break;
+						//}
+					//}
+				//}
+			//}		
+		//}
+	//}
 	return 0;
 }
