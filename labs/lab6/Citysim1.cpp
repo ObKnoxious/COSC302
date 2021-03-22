@@ -14,7 +14,6 @@ class city{
 		float lon;
 		int popu;
 		const static float rp =	M_PI/180;
-		//const static float rp = (22/7)/180;
 	public:
 		std::string getName(){
 			return name;
@@ -32,13 +31,9 @@ class city{
 			return lon;
 		}
 		float getLatRad(){
-			//float pi = 22/7;
-			//float rp = pi/180;
 			return lat*rp;
 		}
 		float getLonRad(){
-			//float pi = 22/7;
-			//float rp = pi/180;
 			return lon*rp;
 		}
 		int getPopu(){
@@ -95,12 +90,15 @@ float haversine(float a1, float o1, float a2, float o2){
 class costtable{
 	private:
 		std::vector<std::vector<float> > distance_table;
-		std::vector<float> time_table;
+		std::vector<std::vector<float> > time_table;
 	public:
 		costtable(){}
 		costtable(std::vector<city> &);
 		std::vector<std::vector<float> > getDt(){
 			return distance_table;
+		}
+		std::vector<std::vector<float> > getTt(){
+			return time_table;
 		}
 
 };
@@ -118,65 +116,83 @@ costtable::costtable(std::vector<city> &c){
 			distance_table.at(i).at(j) = haversine(c.at(i).getLatRad(), c.at(i).getLonRad(), c.at(j).getLatRad(), c.at(j).getLonRad());
 		}
 	}
+	time_table.resize(distance_table.size());
+	for(unsigned int i=0; i < time_table.size(); i++){
+		time_table.at(i).resize(distance_table.at(i).size());
+	}
+	for(unsigned int i=0; i < time_table.size(); i++){
+		for(unsigned int j=0; j < time_table.size(); j++){
+			if(i == j){
+				continue;
+			}
+			//if(c.at(i).getZone() == c.at(j).getZone()){
+				//time_table.at(i).at(j) = distance_table.at(i).at(j)/60;
+			if(c.at(j).getType() == "REGIONAL" && c.at(i).getType() == "REGIONAL"){
+				time_table.at(i).at(j) = distance_table.at(i).at(j)/60;
+			}else{
+				time_table.at(i).at(j) = distance_table.at(i).at(j)/570;
+			}
+		}
+	}
+
 }
 
-//std::ostream cityInfo(std::vector<city> c){
-	//std::ostream out;
-	//for(unsigned int i =0; i<c.size(); i++){
-		//out << std::setw(3) << std::right << i << " ";
-	//}
-	//return out;
-//}
 
 
 int main(int argc, char *argv[]){
+	if((argc != 2) || (std::string(argv[1]) != "-graphinfo")){
+		std::cerr << "usage: ./Citysim1 -graphinfo\n";
+		return 1;
+	}
 	std::vector<city> c;
 	read_cityinfo("city_list.txt", c);
-	//for(unsigned int i=0; i<c.size(); i++){
-		//std::cout << c.at(i) << '\n';
-	//}
 	costtable ct(c);
-	if(std::string(argv[1]) == "-graphinfo"){
-		std::ofstream info("city_info.txt");
-		info << "CITY INFO (N=" << c.size()-1 << "):\n\n";
-		for(unsigned int i =1; i<c.size(); i++){
-			info << std::setw(3) << std::right << i-1 << " " << c.at(i);
-		}
-		info.close();
-		std::ofstream dis("city_distancetable.txt");
-		dis << "DISTANCE TABLE:\n";
-		for(unsigned int i =1; i<c.size(); i++){	
-			for(unsigned int j=1; j<i; j++){
-				//std::cout << " J: " << j << " " << c.at(j).getName() << " i: " << c.at(i).getName() << '\n';
-				std::string o = c.at(i).getName() + " to " + c.at(j).getName() + " ";
-				std::ostringstream tv;
-				tv << ct.getDt().at(i).at(j);
-				std::string tvs(tv.str());
-				std::string d = tvs + ".0 miles";
-				dis << std:: setw(3) << std::setfill(' ') << std::right << i-1 << " " << std::setw(38) << std::setfill('.') << std::left << o << std::setw(13) << std::setfill(' ') << std::right << d<< '\n';
-			
-			}
-			dis << '\n';
-		}
-		dis.close();
+	//City Info
+	std::ofstream info("city_info.txt");
+	info << "CITY INFO (N=" << c.size()-1 << "):\n\n";
+	for(unsigned int i =1; i<c.size(); i++){
+		info << std::setw(3) << std::right << i-1 << " " << c.at(i);
 	}
-	//if(std::string(argv[1]) == "-distance"){
-		//while(true){
-			//std::string c1;
-			//std::string c2;
-			//std::cin >>c1;
-			//std::cin >>c2;
-			//for(unsigned int i=0; i<c.size(); i++){
-				//if(c.at(i).getName() == c1){
-					//for(unsigned int j=0; j<c.size(); j++){
-						//if(c.at(j).getName() == c2){
-							//std::cout <<"Distance "<< ct.getDt().at(i).at(j) << "\n";
-							//break;
-						//}
-					//}
-				//}
-			//}		
-		//}
-	//}
+	info.close();
+	//Distance Table
+	std::ofstream dis("city_distancetable.txt");
+	dis << "DISTANCE TABLE:\n";
+	for(unsigned int i =1; i<c.size(); i++){	
+		for(unsigned int j=1; j<i; j++){
+			std::string o = c.at(i).getName() + " to " + c.at(j).getName() + " ";
+			std::ostringstream tv;
+			tv << ct.getDt().at(i).at(j);
+			std::string tvs(tv.str());
+			std::string d = tvs + ".0 miles";
+			dis << std:: setw(3) << std::setfill(' ') << std::right << i-1 << " " << std::setw(38) << std::setfill('.') << std::left << o << std::setw(13) << std::setfill(' ') << std::right << d<< '\n';
+		
+		}
+		dis << '\n';
+	}
+	dis.close();
+	//Time Table
+	std::ofstream tim("city_timetable.txt");
+	tim << "TIME TABLE:\n";
+	for(unsigned int i =1; i<c.size(); i++){
+		for(unsigned int j=1; j<i; j++){
+			std::string o = c.at(i).getName() + " to " + c.at(j).getName() + " ";
+			std::ostringstream tv;
+			float tvf = ct.getTt().at(i).at(j);
+			tvf = round(10 * tvf)/10;
+			if(tvf-(int)tvf ==0){
+				tv << tvf << ".0";
+			}else {
+				tv << tvf;
+			}
+			std::string tvs(tv.str());
+			std::string d = tvs + " hours";
+			tim << std:: setw(3) << std::setfill(' ') << std::right << i-1 << " " << std::setw(38) << std::setfill('.') << std::left << o << std::setw(11) << std::setfill(' ') << std::right << d<< '\n';
+		
+		}
+		tim <<'\n';
+	}
+	tim.close();
+
+
 	return 0;
 }
