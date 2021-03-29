@@ -475,7 +475,7 @@ void dijkstra_time(int source, int sink, std::vector<city> c, std::vector<std::v
 			<< std::setw(19) << std::left << c.at(i+1).getName()
 			<< std::setprecision(1) << std::fixed << std::setw(6) << std::right <<  vtim.at(i) << " miles  "
 			<< std::setw(4) << std::right << (vdist.at(i))-tt << " hours" << '\n';
-		td+=vtim.at(i);
+		td=vtim.at(i);
 		tt=vdist.at(i);
 	}
 	std::cout << '\n';
