@@ -39,6 +39,7 @@ void randperm( cell(*a)[2], int aS){
 
 
 int main(int argc, char *argv[]) {
+	srand(time(NULL));
 	if (argc != 4) {
 	//print usage error message to stderr
 		printf("usage: ./Mazemake nrow ncol maze.txt\n");
@@ -76,9 +77,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
   //randomly perturb list order: swap based
-	randperm(wall, N);
   //open output file for writing (argv[3])
-
+	//dset ds = dset(Nrow*Ncol);
   //write MAZE, Nrow, Ncol header 
 
 	FILE *fout = fopen(argv[3], "w");
@@ -87,6 +87,15 @@ int main(int argc, char *argv[]) {
 		fprintf(fout, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
 
 	}
+	randperm(wall, N);
+	FILE *fout2 = fopen("nonrand.txt", "w");
+	fprintf(fout2, "MAZE %d %d\n", Nrow, Ncol);
+	for(int i =0; i<N; i++){
+		fprintf(fout2, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
+
+	}
+
+	
 	
 
   //for (k=0; k<N; k++) {
