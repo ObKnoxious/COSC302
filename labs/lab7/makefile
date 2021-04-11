@@ -1,11 +1,11 @@
 
-cc= g++
+CC= g++
 CFLAGS= -g -Wall
 BIN = Mazemake
 
 all: $(BIN)
 
-Mazemake: Mazemake.cpp dset.h dset.cpp
+Mazemake: Mazemake.cpp
 	$(CC) $(CFLAGS) -o Mazemake Mazemake.cpp
 
 clean:

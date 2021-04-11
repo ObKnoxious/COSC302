@@ -3,8 +3,82 @@
 #include <ctime>
 #include <cstdio>
 
-#include "dset.h"
+//TODO DELETE THIS ITS JUST FOR TESTING
+#include <iostream>
+// The following was coppied directly from the Dset handout
+#include <vector>
 
+class dset {
+    struct node {
+        node() {
+            rank = 0;
+            parent = -1;
+        }
+        int rank, parent;
+    };
+
+  public:
+    dset(int Nsets);
+
+    int size() { return Nsets; }
+
+    int add_set();
+    int merge(int, int);
+    int find(int);
+	void print();
+  private:
+    int Nsets;
+    std::vector< node > S;
+};
+dset::dset(int N) {
+    S.assign(N, node());
+    Nsets = N;
+}
+
+int dset::add_set() {
+    S.insert(S.end(), 1, node());
+    Nsets++;
+
+    return S.size() - 1;
+}
+
+int dset::merge(int i, int j) {
+    i = find(i);
+    j = find(j);
+
+    if (i != j) {
+        node &Si = S[i];
+        node &Sj = S[j];
+
+        if (Si.rank > Sj.rank)
+            Sj.parent = i;
+        else if (Si.rank < Sj.rank)
+            Si.parent = j;
+        else {
+            Sj.parent = i;
+            Si.rank++;
+        }
+
+        Nsets--;
+    }
+
+    return find(i);
+}
+
+int dset::find(int i) {
+    if (S[i].parent == -1) 
+        return i;
+
+    S[i].parent = find(S[i].parent);
+    return S[i].parent;
+}
+// End Dset handout code
+//Additional print function for debug
+void dset::print(){
+	for(int i =0; i<Nsets; i++){
+		std::cout << S.at(i).rank << S.at(i).parent << '\n';
+	}
+}
 //struct cell { ... }
 
 struct cell{
@@ -76,38 +150,54 @@ int main(int argc, char *argv[]) {
 			k++;
 		}
 	}
+	randperm(wall, N);
   //randomly perturb list order: swap based
   //open output file for writing (argv[3])
-	//dset ds = dset(Nrow*Ncol);
+	 dset ds(int(Nrow*Ncol));
   //write MAZE, Nrow, Ncol header 
-
 	FILE *fout = fopen(argv[3], "w");
 	fprintf(fout, "MAZE %d %d\n", Nrow, Ncol);
-	for(int i =0; i<N; i++){
-		fprintf(fout, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
+	//for(int i =0; i<N; i++){
+		//fprintf(fout, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
 
-	}
-	randperm(wall, N);
-	FILE *fout2 = fopen("nonrand.txt", "w");
-	fprintf(fout2, "MAZE %d %d\n", Nrow, Ncol);
-	for(int i =0; i<N; i++){
-		fprintf(fout2, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
+	//}
+	//FILE *fout2 = fopen("nonrand.txt", "w");
+	//fprintf(fout2, "MAZE %d %d\n", Nrow, Ncol);
+	//for(int i =0; i<N; i++){
+		//fprintf(fout2, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
 
-	}
+	//}
 
 	
 	
-
+	int i;
   //for (k=0; k<N; k++) {
-    //if: pair of cells given by wall[k][] are not
+  	for(i=0; i<N; i++){
+		int ii = wall[i][0].x + (wall[i][0].y * Ncol);
+		int jj = wall[i][1].x + (wall[i][1].y * Ncol);
+  //if: pair of cells given by wall[k][] are not
 	//connected (belong to different disjoint sets),
+		if(ds.find(ii) != ds.find(jj)){
+			ds.merge(ii, jj);
+
 	//merge them
 	
 	//else: write wall location to file as two pairs 
-	//of cell indices: i0 j0 i1 j1
-
+		}else{
+			//of cell indices: i0 j0 i1 j1
+			fprintf(fout, "%3d %3d %3d %3d\n", wall[i][0].x, wall[i][0].y, wall[i][1].x, wall[i][1].y);
+		}
     //if: all cells belong to the same set, break
-  //}
+		if(ds.size() == 1){
+			break;
+		}
+	}
+	i++;
+	for(int j=i; j< N; j++){
+		fprintf(fout, "%3d %3d %3d %3d\n", wall[j][0].x, wall[j][0].y, wall[j][1].x, wall[j][1].y);
+	}
+
+	ds.print();
 
   //write any remaining walls to file
 
