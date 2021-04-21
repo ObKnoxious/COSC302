@@ -37,15 +37,15 @@ template <typename T> class matrix {
 
 
 enum direction{
-	   NONE=0,
 	   VERT=1,
 	   HORZ=2,
+	   DIAG=4,
 };
 enum operation{
-	   NONE_OP=0,
-	   DELETE=1,
-	   INSERT=2,
-	   MATCH=4
+	   //NONE_OP=0,
+	   DELETE=0,
+	   INSERT=1,
+	   MATCH=2,
 };
 
 struct diff{
@@ -64,9 +64,9 @@ class LCS{
 			 int n;
 			 matrix<int> cost;
 			 matrix<int> link;
-			 int V;
-			 int H;
-			 int D;
+			 //int V;
+			 //int H;
+			 //int D;
 			 
 			 //int(LCS::*DEL)(std::string);
 			 //int(LCS::*INS)(std::string);
@@ -91,7 +91,8 @@ class LCS{
 			 //void compute_alignment(std::string &, std::string &);
 			 void compute_alignment();
 			 void report_difference();
-			 void report_difference(std::stack<diff> &, int &, int &);
+			 void report_difference(std::stack<diff> &, int, int);
+			 void printToMatch(std::list<diff>, std::list<diff>);
 
 };
 
@@ -107,35 +108,35 @@ void LCS::compute_alignment(){
 	   t2.insert(t2.begin(), "");
 	   m = t1.size();
 	   n = t2.size();
-	   cost.assign(m+1, n+1);
+	   cost.assign(m, n);
 	   link.assign(m, n);
 	   cost[0][0] = 0;
 	   link[0][0] = 0;
 
 	   for(int i=1; i<m; i++){
-			 cost[i][0] = cost[0][i-1] + DELcost(t1[i]);
-			 link[0][i] = V;
+			 cost[i][0] = cost[i-1][0] + DELcost(t1[i]);
+			 link[i][0] = VERT;
 	   }
 	   for(int j=1; j<n; j++){
 			 cost[0][j] = cost[0][j-1] + INScost(t2[j]);
-			 link[0][j] = H;
+			 link[0][j] = HORZ;
 	   }
 
 	   for(int i=1; i<m; i++){
 			 for(int j=1; j<n; j++){
 				    cost[i][j] = cost[i-1][j-1] + SUBcost(t1[i],t2[j]);
-				    link[i][j] = D;
+				    link[i][j] = DIAG;
 
 				    int delcost = cost[i-1][j] + DELcost(t1[i]);
 				    if(delcost < cost[i][j]){
 						  cost[i][j] = delcost;
-						  link[i][j] = V;
+						  link[i][j] = VERT;
 				    }
 
 				    int inscost = cost[i][j-1] + INScost(t2[j]);
 				    if(inscost < cost[i][j]){
 						  cost[i][j] = inscost;
-						  link[i][j] = H;
+						  link[i][j] = HORZ;
 				    }
 			 }
 	   }
@@ -148,50 +149,88 @@ void LCS::compute_alignment(){
 
 void::LCS::report_difference(){
 	   std::stack<diff> tsm;
-	   report_difference(tsm, m-1, n-1);
+	   report_difference(tsm, t1.size()-1, t2.size()-1);
 	   std::list<diff> dL;
 	   std::list<diff> iL;
-	   while(!(tsm.empty())){
-			switch(tsm.top().op){
+	   while(!tsm.empty()){
+			 //std::cerr<<"b4 switch\n";
+			 switch(tsm.top().op){
 				   case DELETE:
+					 //std::cerr<<"DELETE\n";
 						 dL.push_back(tsm.top());
 						 break;
 				    case INSERT:
+						 //std::cerr<<"INSTERT\n";
 						 iL.push_back(tsm.top());
 						 break;
-				    case MATCH:
+				    //case MATCH:
+				    default:
+					 //std::cerr<<"MATCH\n";
 						 printToMatch(dL, iL);
 						 dL.clear();
 						 iL.clear();
 						 break;
-				    case NONE_OP:
-						 break;
 			}
 			tsm.pop();
 	   }
-	   if((!dL.empty()) || (!(iL.empty()))){
+	   //std::cerr<<"b4 if\n";
+	   if(dL.size() || iL.size()){
 			 printToMatch(dL, iL);
 	   }
 }
 
-void::LCS::report_difference(std::stack<diff> tsm, int m, int n){
+void::LCS::report_difference(std::stack<diff> &tsm, int m, int n){
 	   if(m < 0 || n < 0){
 			 return;
 	   }
 	   if(link[m][n] == VERT){
-			 diff o {m, n, 0};
-			 s.push(o);
+			 //std::cerr<<"VERT\n";
+			 diff op {m, n, 0};
+			 tsm.push(op);
 			 report_difference(tsm, m-1, n);
 	   }else if(link[m][n] == HORZ){
-			 diff o {m, n, 1};
-			 s.push(o);
+		 //std::cerr<<"HORZ\n";
+			 diff op {m, n, 1};
+			 tsm.push(op);
 			 report_difference(tsm, m , n-1);
 	   }else {
-			 diff o {m, n, 2};
-			 s.push(o);
-			 report_difference(s, m-1, n-1);
+			 //std::cerr<<"ELSE\n";
+			 diff op {m, n, 2};
+			 tsm.push(op);
+			 report_difference(tsm, m-1, n-1);
 	   }
 }
+
+void::LCS::printToMatch(std::list<diff> dL, std::list<diff> iL){
+	  //std::cerr<< "In recursize cal
+	   //std::cerr<< "Print to match\n";
+	   if(!iL.size() && !dL.size()){
+			 return;
+	   }
+	   if(dL.size()){
+			 dL.front().m;
+			 if(dL.front().m == dL.back().m){
+				    std::cout<<dL.front().n;
+			 }else{
+				    std::cout << dL.front().n << "," << dL.back().n;
+			 }
+	   }else{
+			 std::cout<<iL.front().m;
+			 std::cout << 'a';
+	   }
+	   if(dL.size()&&iL.size()){
+			 std::cout << 'c';
+	   }
+	   if(iL.size()){
+			 iL.front().n;
+			 if(iL.front().n == iL.back().n){
+				    std::cout << iL.front().n;
+			 }else{
+				    std::cout << dL.front().n << ',' << dL.back().n;
+			 }
+	   }
+}
+
 
 //int main(int argc, char *argv[])
 int main(int argc, char *argv[]){
@@ -228,4 +267,5 @@ int main(int argc, char *argv[]){
 	   lcs.compute_alignment();
  //lcs.compute_alignment();
   //lcs.report_difference();
+	   lcs.report_difference();
 }
